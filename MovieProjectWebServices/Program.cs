@@ -40,6 +40,8 @@ namespace MovieProjectWebServices
 
             app.MapControllers();
 
+            console.WriteLine("Hello World");
+
             app.Run();
         }
     }
