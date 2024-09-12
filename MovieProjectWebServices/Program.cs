@@ -2,8 +2,10 @@ using Microsoft.AspNetCore.Connections;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using MoviesDatabase;
 using MoviesDatabase.Interfaces;
+using MoviesDatabase.Models;
 using MoviesDatabase.Repos;
 
 namespace MovieProjectWebServices
@@ -15,9 +17,13 @@ namespace MovieProjectWebServices
 
 
             var builder = WebApplication.CreateBuilder(args);
-            builder.Services.AddScoped<IMovieRepo, MovieRepo>();
-            builder.Services.AddDbContext<MovieDBContext>(options =>
-            options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+            builder.Services.AddScoped<IRepository<MovieModel>, Repository<MovieModel>>();
+            builder.Services.AddScoped<IRepository<GenreModel>, Repository<GenreModel>>();
+            builder.Services.AddScoped<IRepository<CinemaHallModel>, Repository <CinemaHallModel>>();
+            builder.Services.AddDbContext<ContextDB>(options =>
+                options.UseSqlServer(
+                    builder.Configuration.GetConnectionString("DefaultConnection"),
+                    sqlOptions => sqlOptions.MigrationsAssembly("MoviesDatabase")));
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
