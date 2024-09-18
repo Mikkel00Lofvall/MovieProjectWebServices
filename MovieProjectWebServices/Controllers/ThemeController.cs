@@ -8,9 +8,9 @@ namespace MovieProjectWebServices.Controllers
     [ApiController]
     public class ThemeController : ControllerBase
     {
-        private readonly IRepository<GenreModel> repo;
+        private readonly IRepository<ThemeModel> repo;
 
-        public ThemeController(IRepository<GenreModel> repo)
+        public ThemeController(IRepository<ThemeModel> repo)
         {
             this.repo = repo;
         }
@@ -24,10 +24,10 @@ namespace MovieProjectWebServices.Controllers
             return Ok(themes);
         }
 
-        [HttpPost("GetThemeWithId")]
-        public async Task<IActionResult> Get([FromBody] GenreModel genre)
+        [HttpGet("GetThemeWithId/{id}")]
+        public async Task<IActionResult> Get(int id)
         {
-            (bool result, string message, var theme) = await repo.GetWithId(genre.id);
+            (bool result, string message, var theme) = await repo.GetWithId(id);
             if (result) return Ok(theme);
 
             else return BadRequest(message);
@@ -36,7 +36,7 @@ namespace MovieProjectWebServices.Controllers
         }
 
         [HttpPost("CreateTheme")]
-        public async Task<IActionResult> Create([FromBody] GenreModel genre)
+        public async Task<IActionResult> Create([FromBody] ThemeModel genre)
         {
             if (genre != null)
             {
@@ -51,7 +51,7 @@ namespace MovieProjectWebServices.Controllers
         }
 
         [HttpDelete("DeleteTheme")]
-        public async Task<IActionResult> Delete([FromBody] GenreModel genre)
+        public async Task<IActionResult> Delete([FromBody] ThemeModel genre)
         {
             (bool result, string message, var theme) = await repo.GetWithId(genre.id);
             if (result)

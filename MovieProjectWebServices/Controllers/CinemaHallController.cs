@@ -24,10 +24,10 @@ namespace MovieProjectWebServices.Controllers
             return Ok(cinemaHall);
         }
 
-        [HttpPost("GetHallWithId")]
-        public async Task<IActionResult> Get([FromBody] CinemaHallModel hall)
+        [HttpGet("GetHallWithId/{id}")]
+        public async Task<IActionResult> Get(int id)
         {
-            (bool result, string message, var cinemaHall) = await repo.GetWithId(hall.id);
+            (bool result, string message, var cinemaHall) = await repo.GetWithId(id);
             if (result) return Ok(cinemaHall);
 
             else return BadRequest(message);
