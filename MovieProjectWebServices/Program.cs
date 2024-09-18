@@ -17,7 +17,7 @@ namespace MovieProjectWebServices
 
 
             var builder = WebApplication.CreateBuilder(args);
-            builder.Services.AddScoped<IRepository<MovieModel>, Repository<MovieModel>>();
+            builder.Services.AddScoped<MovieRepository>();
             builder.Services.AddScoped<IRepository<ThemeModel>, Repository<ThemeModel>>();
             builder.Services.AddScoped<IRepository<CinemaHallModel>, Repository <CinemaHallModel>>();
             builder.Services.AddDbContext<ContextDB>(options =>

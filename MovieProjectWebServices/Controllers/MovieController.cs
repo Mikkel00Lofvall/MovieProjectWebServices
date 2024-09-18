@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using MoviesDatabase;
 using MoviesDatabase.Interfaces;
 using MoviesDatabase.Models;
+using MoviesDatabase.Repos;
 using System.Reflection.Metadata;
 using System.Runtime.CompilerServices;
 
@@ -12,9 +13,9 @@ namespace MovieProjectWebServices.Controllers
     [ApiController]
     public class MovieController : ControllerBase
     {
-        private readonly IRepository<MovieModel> repo;
+        private readonly MovieRepository repo;
 
-        public MovieController(IRepository<MovieModel> repo)
+        public MovieController(MovieRepository repo)
         {
             this.repo = repo;
         }
