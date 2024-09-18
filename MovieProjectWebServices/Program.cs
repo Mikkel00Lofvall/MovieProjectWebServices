@@ -18,26 +18,36 @@ namespace MovieProjectWebServices
 
             var builder = WebApplication.CreateBuilder(args);
             builder.Services.AddScoped<IRepository<MovieModel>, Repository<MovieModel>>();
-            builder.Services.AddScoped<IRepository<GenreModel>, Repository<GenreModel>>();
+            builder.Services.AddScoped<IRepository<ThemeModel>, Repository<ThemeModel>>();
             builder.Services.AddScoped<IRepository<CinemaHallModel>, Repository <CinemaHallModel>>();
             builder.Services.AddDbContext<ContextDB>(options =>
                 options.UseSqlServer(
                     builder.Configuration.GetConnectionString("DefaultConnection"),
                     sqlOptions => sqlOptions.MigrationsAssembly("MoviesDatabase")));
 
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowSpecificOrigin", builder =>
+                {
+                    builder.WithOrigins("http://localhost:3000").AllowAnyHeader().AllowAnyMethod().AllowCredentials();
+                });
+            });
+
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+            //builder.Services.AddSwaggerGen();
 
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment())
+            /*if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
                 app.UseSwaggerUI();
-            }
+            }*/
+
+            app.UseCors("AllowSpecificOrigin");
 
             app.UseHttpsRedirection();
 

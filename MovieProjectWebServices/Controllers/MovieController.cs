@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using MoviesDatabase;
 using MoviesDatabase.Interfaces;
 using MoviesDatabase.Models;
+using System.Reflection.Metadata;
+using System.Runtime.CompilerServices;
 
 namespace MovieProjectWebServices.Controllers
 {
@@ -26,10 +28,10 @@ namespace MovieProjectWebServices.Controllers
             return Ok(movies);
         }
 
-        [HttpPost("GetMovieWithId")]
-        public async Task<IActionResult> Get([FromBody] MovieModel movie) 
+        [HttpGet("GetMovieWithId/{id}")]
+        public async Task<IActionResult> Get(int id) 
         {
-            (bool result, string message, var resultMovie) = await repo.GetWithId(movie.id);
+            (bool result, string message, var resultMovie) = await repo.GetWithId(id);
             if (result) return Ok(resultMovie);
 
             else return BadRequest(message);
@@ -37,11 +39,13 @@ namespace MovieProjectWebServices.Controllers
         }
 
         [HttpPost("CreateMovie")]
-        public async Task<IActionResult> Create([FromBody] MovieModel movie)
+        public async Task<IActionResult> Create([FromBody] MovieModel inputMovie)
         {
-            if (movie != null) 
+            if (inputMovie != null) 
             {
-                (bool result, string message) = await repo.Create(movie);
+
+
+                (bool result, string message) = await repo.Create(inputMovie);
                 if (result) return Ok();
 
                 else return BadRequest(message);
@@ -52,7 +56,7 @@ namespace MovieProjectWebServices.Controllers
         }
 
         [HttpDelete("DeleteMovie")]
-        public async Task<IActionResult> Delete([FromBody] GenreModel genre)
+        public async Task<IActionResult> Delete([FromBody] ThemeModel genre)
         {
             (bool result, string message, var resultMovie) = await repo.GetWithId(genre.id);
             if (result)
