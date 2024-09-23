@@ -6,6 +6,7 @@ using Microsoft.Extensions.Options;
 using MoviesDatabase;
 using MoviesDatabase.Interfaces;
 using MoviesDatabase.Models;
+using MoviesDatabase.Models.Test;
 using MoviesDatabase.Repos;
 
 namespace MovieProjectWebServices
@@ -15,24 +16,28 @@ namespace MovieProjectWebServices
         public static void Main(string[] args)
         {
 
-
+            string machineName = System.Environment.MachineName;
             var builder = WebApplication.CreateBuilder(args);
-            builder.Services.AddScoped<MovieRepository>();
-            builder.Services.AddScoped<ScheduleRepository>();
+            builder.Services.AddScoped<IRepository<MovieModel>, Repository<MovieModel>>();
             builder.Services.AddScoped<IRepository<ThemeModel>, Repository<ThemeModel>>();
+            builder.Services.AddScoped<IRepository<TestModel>, Repository<TestModel>>();
             builder.Services.AddScoped<IRepository<CinemaHallModel>, Repository <CinemaHallModel>>();
+
+            string connectionString = "";
+
+            if (machineName == "MSI") connectionString = builder.Configuration.GetConnectionString("OffSiteConnection");
+
+            else if (machineName == "HomeCom") connectionString = builder.Configuration.GetConnectionString("HomeConnection");
+                
+            else connectionString = builder.Configuration.GetConnectionString("HomeConnection");
+                
+
+            
+
             builder.Services.AddDbContext<ContextDB>(options =>
                 options.UseSqlServer(
-                    builder.Configuration.GetConnectionString("DefaultConnection"),
+                    connectionString,
                     sqlOptions => sqlOptions.MigrationsAssembly("MoviesDatabase")));
-
-            builder.Services.AddCors(options =>
-            {
-                options.AddPolicy("AllowSpecificOrigin", builder =>
-                {
-                    builder.WithOrigins("http://localhost:3000").AllowAnyHeader().AllowAnyMethod().AllowCredentials();
-                });
-            });
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -47,8 +52,6 @@ namespace MovieProjectWebServices
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
-
-            app.UseCors("AllowSpecificOrigin");
 
             app.UseHttpsRedirection();
 
