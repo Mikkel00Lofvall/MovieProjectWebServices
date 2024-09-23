@@ -15,9 +15,14 @@ namespace MovieProjectWebServices.Controllers
         [HttpGet("GetSchedules")]
         public async Task<IActionResult> Get()
         {
-            var schedules = await repo.GetAll();
+            (bool result, string message, var schedules) = await repo.GetAll();
+            if (result)
+            {
+                return Ok(schedules);
+            }
 
-            return Ok(schedules);
+            return BadRequest(message);
+            
         }
 
         [HttpGet("GetSchedulesWithMovieID/{id}")]

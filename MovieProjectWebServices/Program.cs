@@ -18,7 +18,21 @@ namespace MovieProjectWebServices
 
             string machineName = System.Environment.MachineName;
             var builder = WebApplication.CreateBuilder(args);
-            builder.Services.AddScoped<IRepository<MovieModel>, Repository<MovieModel>>();
+
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowSpecificOrigins",
+                    policy =>
+                    {
+                        policy.WithOrigins("http://localhost:3000") // React frontend running on port 3000
+                              .AllowAnyMethod()
+                              .AllowAnyHeader()
+                              .AllowCredentials();
+                    });
+            });
+
+            builder.Services.AddScoped<MovieRepository>();
+            builder.Services.AddScoped<ScheduleRepository>();
             builder.Services.AddScoped<IRepository<ThemeModel>, Repository<ThemeModel>>();
             builder.Services.AddScoped<IRepository<TestModel>, Repository<TestModel>>();
             builder.Services.AddScoped<IRepository<CinemaHallModel>, Repository <CinemaHallModel>>();
@@ -27,17 +41,16 @@ namespace MovieProjectWebServices
 
             if (machineName == "MSI") connectionString = builder.Configuration.GetConnectionString("OffSiteConnection");
 
-            else if (machineName == "HomeCom") connectionString = builder.Configuration.GetConnectionString("HomeConnection");
+            else if (machineName == "MJENSENLAPTOP") connectionString = builder.Configuration.GetConnectionString("HomeConnection");
                 
             else connectionString = builder.Configuration.GetConnectionString("HomeConnection");
                 
-
-            
 
             builder.Services.AddDbContext<ContextDB>(options =>
                 options.UseSqlServer(
                     connectionString,
                     sqlOptions => sqlOptions.MigrationsAssembly("MoviesDatabase")));
+
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -52,6 +65,8 @@ namespace MovieProjectWebServices
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+
+            app.UseCors("AllowSpecificOrigins");
 
             app.UseHttpsRedirection();
 
