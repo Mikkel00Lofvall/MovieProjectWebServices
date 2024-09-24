@@ -8,6 +8,7 @@ using MoviesDatabase.Interfaces;
 using MoviesDatabase.Models;
 using MoviesDatabase.Models.Test;
 using MoviesDatabase.Repos;
+using System.Runtime.InteropServices;
 
 namespace MovieProjectWebServices
 {
@@ -33,6 +34,7 @@ namespace MovieProjectWebServices
 
             builder.Services.AddScoped<MovieRepository>();
             builder.Services.AddScoped<ScheduleRepository>();
+            builder.Services.AddScoped<CinemaHallRepository>();
             builder.Services.AddScoped<IRepository<ThemeModel>, Repository<ThemeModel>>();
             builder.Services.AddScoped<IRepository<TestModel>, Repository<TestModel>>();
             builder.Services.AddScoped<IRepository<CinemaHallModel>, Repository <CinemaHallModel>>();

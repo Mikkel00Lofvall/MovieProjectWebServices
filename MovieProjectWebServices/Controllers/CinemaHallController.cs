@@ -2,6 +2,7 @@
 using MoviesDatabase.DTO;
 using MoviesDatabase.Interfaces;
 using MoviesDatabase.Models;
+using MoviesDatabase.Repos;
 
 namespace MovieProjectWebServices.Controllers
 {
@@ -9,9 +10,9 @@ namespace MovieProjectWebServices.Controllers
     [ApiController]
     public class CinemaHallController : ControllerBase
     {
-        private readonly IRepository<CinemaHallModel> repo;
+        private readonly CinemaHallRepository repo;
 
-        public CinemaHallController(IRepository<CinemaHallModel> repo)
+        public CinemaHallController(CinemaHallRepository repo)
         {
             this.repo = repo;
         }
@@ -35,15 +36,44 @@ namespace MovieProjectWebServices.Controllers
 
         }
 
-        [HttpPost("CreateHall")]
-        public async Task<IActionResult> Create([FromBody] CinemaHallDTO hall)
+        char GetNextLetter(char letter)
         {
-            if (hall != null)
+            if (letter == 'Z')
             {
-                CinemaHallModel model = new CinemaHallModel();
-                model.Name = hall.Name;
+                return 'A';
+            }
+            return (char)(letter + 1);
+        }
 
-                (bool result, string message) = await repo.Create(model);
+        [HttpPost("CreateHall")]
+        public async Task<IActionResult> Create([FromBody] CinemaHallDTO DTO)
+        {
+            if (DTO != null)
+            {
+                char currentLetter = 'A';
+                CinemaHallModel hallModel = new CinemaHallModel();
+                List<SeatModel> seatModels = new List<SeatModel>();
+
+                for (int row = 0; row < DTO.RowAmount; row++)
+                {
+                    for (int seat = 0; seat < DTO.SeatsOnARow; seat++)
+                    {
+                        SeatModel seatModel = new SeatModel()
+                        {
+                            RowName = $"{currentLetter}",
+                            RowNumber = seat + 1,
+                            IsTaken = false
+                        };
+
+                        seatModels.Add(seatModel);
+                    }
+
+                    currentLetter = GetNextLetter(currentLetter);
+                }
+
+                hallModel.Name = DTO.Name;
+                hallModel.Seats = seatModels;
+                (bool result, string message) = await repo.Create(hallModel);
                 if (result) return Ok();
 
                 else return BadRequest(message);
