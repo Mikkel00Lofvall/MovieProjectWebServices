@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using MoviesDatabase.DTO;
 using MoviesDatabase.Models;
 using MoviesDatabase.Repos;
 
@@ -38,13 +39,14 @@ namespace MovieProjectWebServices.Controllers
             return BadRequest(message);
         }
 
-        [HttpPost("CreateSchedule/{id}")]
-        public async Task<IActionResult> Create(int id, [FromBody] DateModel date)
+        [HttpPost("CreateSchedule")]
+        /*public async Task<IActionResult> Create(int id, [FromBody] SchedulesDTO scheduleInput)
         {
-            if (id != null && date != null)
+            if (id != null && scheduleInput != null)
             {
+                
 
-                (bool result, string message) = await repo.UpdateMovieWithSchedule(id, date);
+                (bool result, string message) = await repo.UpdateMovieWithSchedule(id, scheduleInput.Date);
                 if (result) return Ok();
 
                 else return BadRequest(message);
@@ -52,6 +54,19 @@ namespace MovieProjectWebServices.Controllers
 
             else return BadRequest();
 
+        }*/
+
+        public async Task<IActionResult> Create([FromBody] SchedulesDTO scheduleInput)
+        {
+            if (scheduleInput != null)
+            {
+                (bool result, string message) = await repo.CreateScheduleAndInsertIntoHall(scheduleInput);
+                if (result) return Ok();
+
+                else return BadRequest(message);
+            }
+
+            else return BadRequest();
         }
 
         [HttpDelete("DeleteSchedule")]

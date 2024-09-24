@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.11.35222.181
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MovieProjectWebServices", "MovieProjectWebServices\MovieProjectWebServices.csproj", "{1F0D2C04-7255-495C-BD6A-F808034FE9B5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MovieProjectWebServices", "MovieProjectWebServices\MovieProjectWebServices.csproj", "{1F0D2C04-7255-495C-BD6A-F808034FE9B5}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MoviesDatabase", "..\MoviesDatabase\MoviesDatabase\MoviesDatabase.csproj", "{276A4DEB-4E2A-4203-A806-D2EAA4663580}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{1F0D2C04-7255-495C-BD6A-F808034FE9B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1F0D2C04-7255-495C-BD6A-F808034FE9B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1F0D2C04-7255-495C-BD6A-F808034FE9B5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{276A4DEB-4E2A-4203-A806-D2EAA4663580}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{276A4DEB-4E2A-4203-A806-D2EAA4663580}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{276A4DEB-4E2A-4203-A806-D2EAA4663580}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{276A4DEB-4E2A-4203-A806-D2EAA4663580}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

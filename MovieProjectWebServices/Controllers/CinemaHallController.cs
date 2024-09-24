@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using MoviesDatabase.DTO;
 using MoviesDatabase.Interfaces;
 using MoviesDatabase.Models;
 
@@ -35,11 +36,14 @@ namespace MovieProjectWebServices.Controllers
         }
 
         [HttpPost("CreateHall")]
-        public async Task<IActionResult> Create([FromBody] CinemaHallModel hall)
+        public async Task<IActionResult> Create([FromBody] CinemaHallDTO hall)
         {
             if (hall != null)
             {
-                (bool result, string message) = await repo.Create(hall);
+                CinemaHallModel model = new CinemaHallModel();
+                model.Name = hall.Name;
+
+                (bool result, string message) = await repo.Create(model);
                 if (result) return Ok();
 
                 else return BadRequest(message);

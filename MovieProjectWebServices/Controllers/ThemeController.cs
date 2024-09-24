@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using MoviesDatabase.DTO;
 using MoviesDatabase.Interfaces;
 using MoviesDatabase.Models;
 
@@ -36,11 +37,14 @@ namespace MovieProjectWebServices.Controllers
         }
 
         [HttpPost("CreateTheme")]
-        public async Task<IActionResult> Create([FromBody] ThemeModel genre)
+        public async Task<IActionResult> Create([FromBody] ThemeDTO themeInput)
         {
-            if (genre != null)
+            if (themeInput != null)
             {
-                (bool result, string message) = await repo.Create(genre);
+                ThemeModel newTheme = new ThemeModel(); 
+                newTheme.Name = themeInput.Name;
+
+                (bool result, string message) = await repo.Create(newTheme);
                 if (result) return Ok();
 
                 else return BadRequest(message);

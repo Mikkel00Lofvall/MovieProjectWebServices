@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using MoviesDatabase;
 using MoviesDatabase.Interfaces;
 using MoviesDatabase.Models;
+using MoviesDatabase.DTO;
 using MoviesDatabase.Repos;
 using System.Reflection.Metadata;
 using System.Runtime.CompilerServices;
@@ -40,13 +41,19 @@ namespace MovieProjectWebServices.Controllers
         }
 
         [HttpPost("CreateMovie")]
-        public async Task<IActionResult> Create([FromBody] MovieModel inputMovie)
+        public async Task<IActionResult> Create([FromBody] MovieDTO inputMovie)
         {
             if (inputMovie != null) 
             {
+                MovieModel newMovie = new MovieModel();
+                newMovie.Name = inputMovie.Name;
+                newMovie.Description = inputMovie.Description;
+                newMovie.FrontPageImage = inputMovie.FrontPageImage;
+                newMovie.TrailerLink = inputMovie.TrailerLink;
+                newMovie.ImagesBlobs = inputMovie.ImagesBlobs;
+                newMovie.Details = inputMovie.Details;
 
-
-                (bool result, string message) = await repo.Create(inputMovie);
+                (bool result, string message) = await repo.Create(newMovie);
                 if (result) return Ok();
 
                 else return BadRequest(message);
