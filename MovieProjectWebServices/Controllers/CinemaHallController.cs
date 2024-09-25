@@ -73,6 +73,7 @@ namespace MovieProjectWebServices.Controllers
 
                 hallModel.Name = DTO.Name;
                 hallModel.Seats = seatModels;
+                hallModel.SeatsOnRow = DTO.SeatsOnARow;
                 (bool result, string message) = await repo.Create(hallModel);
                 if (result) return Ok();
 

@@ -60,31 +60,13 @@ namespace MovieProjectWebServices.Controllers
         [HttpGet("GetMovieAndScheduleByID/{id}")]
         public async Task<IActionResult> GetMovieAndSchedule(int id)
         {
-            /*(bool result, string message, object data) = await _repo.GetMovieAndScheduleByID(id);
-            if (result)
-            {
-                if (data != null)
-                {
-                    (result, message, var cinemaHall) = await _cinemaHallRepository.GetHallBySchedule(id);
-                    if (result)
-                    {
-                        if (cinemaHall != null) return Ok(new { Data = data, Hall = cinemaHall });
-
-                        else return BadRequest("No Hall Connected to that schedule id");
-                    } 
-                    else return BadRequest(message);
-                }
-                else return BadRequest("No Data");
-            }
-
-            return BadRequest(message);*/
-
-
-            (bool result, string message, object data) = await _repo.GetMovieAndScheduleByID(id);
+            (bool result, string message, ScheduleModel schedule, MovieModel movie) = await _repo.GetMovieAndScheduleByID(id);
 
             if (!result) return BadRequest($"Result was not Succesful | Message: {message}");
 
-            if (data == null) return BadRequest($"Result was not Succesful | Message: No Movie in db by that schedule id");
+            if (schedule == null) return BadRequest($"Result was not Succesful | Message: No Schedule in db by that schedule id");
+
+            if (schedule == null) return BadRequest($"Result was not Succesful | Message: No Movie in db by that schedule id");
 
             (result, message, var GottenObject) = await _cinemaHallRepository.GetHallBySchedule(id);
 
@@ -92,7 +74,40 @@ namespace MovieProjectWebServices.Controllers
 
             if (GottenObject == null) return BadRequest($"Result was not Succesful | Message: No Cinema Hall connected to that schedule id");
 
-            return Ok(new { Data = data, Hall = GottenObject });
+            HallDTO hallDTO = new HallDTO()
+            {
+                id = GottenObject.id,
+                Name = GottenObject.Name,
+                Seats = GottenObject.Seats,
+                SeatsOnRow = GottenObject.SeatsOnRow,
+
+            };
+
+            MovieDTO movieDTO = new MovieDTO()
+            {
+                Name = movie.Name,
+                Description = movie.Description,
+                Details = movie.Details,
+                ImagesBlobs = movie.ImagesBlobs,
+                FrontPageImage = movie.FrontPageImage,
+                TrailerLink = movie.TrailerLink,
+            };
+
+            ScheduleDTO scheduleDTO = new ScheduleDTO()
+            {
+                id = schedule.id,
+                date = schedule.Date,
+                MovieID = schedule.MovieId,
+            };
+
+            SeatPageDTO seatPageDTO = new SeatPageDTO()
+            {
+                Hall = hallDTO,
+                Movie = movieDTO,
+                Schedule = scheduleDTO,
+            };
+
+            return Ok(seatPageDTO);
         }
 
 
