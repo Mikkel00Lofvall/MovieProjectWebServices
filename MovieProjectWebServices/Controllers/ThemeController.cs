@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using MoviesDatabase.DTO;
 using MoviesDatabase.Interfaces;
 using MoviesDatabase.Models;
+using MoviesDatabase.Repos;
 
 namespace MovieProjectWebServices.Controllers
 {
@@ -10,9 +11,9 @@ namespace MovieProjectWebServices.Controllers
     [ApiController]
     public class ThemeController : ControllerBase
     {
-        private readonly IRepository<ThemeModel> repo;
+        private readonly ThemeRepository repo;
 
-        public ThemeController(IRepository<ThemeModel> repo)
+        public ThemeController(ThemeRepository repo)
         {
             this.repo = repo;
         }
@@ -35,6 +36,24 @@ namespace MovieProjectWebServices.Controllers
             else return BadRequest(message);
 
 
+        }
+
+        [HttpGet("GetThemesWithMovieID/{movieID}")]
+        public async Task<IActionResult> GetThemesWithMovieID(int movieID)
+        {
+            (bool result, string message, var Themes) = await repo.GetThemesWithMovieID(movieID);
+            if (result) return Ok(Themes);
+            else return BadRequest(message);
+        }
+
+        [HttpPost("UpdateMovieWithThemes/{movieID}")]
+        public async Task<IActionResult> UpdateMovieWithThemes(int movieID, [FromBody] UpdateThemeDTO DTO)
+        {
+            if (DTO == null) return BadRequest("No UpdateThemeDTO");
+
+            (bool result, string message) = await repo.UpdateMovieWithThemes(movieID, DTO);
+            if (result) return Ok(result);
+            else return BadRequest(message);
         }
 
         [HttpPost("CreateTheme")]

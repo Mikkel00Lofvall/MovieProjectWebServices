@@ -39,6 +39,7 @@ namespace MovieProjectWebServices
             builder.Services.AddScoped<ScheduleRepository>();
             builder.Services.AddScoped<CinemaHallRepository>();
             builder.Services.AddScoped<AdminUserRepository>();
+            builder.Services.AddScoped<ThemeRepository>();
             // builder.Services.AddScoped<TicketRepository>();
             builder.Services.AddScoped<IRepository<ThemeModel>, Repository<ThemeModel>>();
             builder.Services.AddScoped<IRepository<TestModel>, Repository<TestModel>>();
