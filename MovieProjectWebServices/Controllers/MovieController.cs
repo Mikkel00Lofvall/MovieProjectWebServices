@@ -7,6 +7,7 @@ using MoviesDatabase.DTO;
 using MoviesDatabase.Repos;
 using System.Reflection.Metadata;
 using System.Runtime.CompilerServices;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MovieProjectWebServices.Controllers
 {

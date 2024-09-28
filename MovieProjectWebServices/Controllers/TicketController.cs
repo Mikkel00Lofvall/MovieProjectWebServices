@@ -52,6 +52,6 @@ namespace MovieProjectWebServices.Controllers
             }
 
             else return BadRequest("No Ticket Data");
-        }
+        } 
     }
 }

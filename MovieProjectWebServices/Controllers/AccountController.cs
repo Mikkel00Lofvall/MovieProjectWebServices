@@ -13,31 +13,61 @@ namespace MovieProjectWebServices.Controllers
     [ApiController]
     public class AccountController : ControllerBase
     {
-        public AccountController() { }
+        private readonly AdminUserRepository _repo;
+        public AccountController(AdminUserRepository repo) { this._repo = repo; }
+
+
+        [HttpPost("Create")]
+        public async Task<IActionResult> Create([FromBody] LoginDTO DTO)
+        {
+            if (DTO != null)
+            {
+                AdminUserModel adminUser = new AdminUserModel() 
+                { 
+                    Username = DTO.Username,
+                    Password = DTO.Password,
+                };
+
+                (bool result, string message) = await _repo.Create(adminUser);
+                if (result) return Ok();
+
+                else return BadRequest(message);
+            }
+
+            else return BadRequest();
+
+        }
 
 
         [HttpPost("login")]
-        public IActionResult Login([FromBody] LoginDTO loginDTO)
+        public async Task<IActionResult> Login([FromBody] LoginDTO loginDTO)
         {
 
+            (bool isAdmin, string message) = await _repo.GetAdminUser(loginDTO.Username, loginDTO.Password);
 
-            var claims = new List<Claim>
+            if (isAdmin) 
             {
-                new Claim(ClaimTypes.Name, "example")
-            };
+                var claims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.Name, "example")
+                };
 
-            var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-            var authProperties = new AuthenticationProperties
-            {
-                
-            };
+                var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                var authProperties = new AuthenticationProperties
+                {
 
-            HttpContext.SignInAsync(
-                CookieAuthenticationDefaults.AuthenticationScheme,
-                new ClaimsPrincipal(claimsIdentity),
-                authProperties);
+                };
 
-            return Ok(new { success = true });
+                HttpContext.SignInAsync(
+                    CookieAuthenticationDefaults.AuthenticationScheme,
+                    new ClaimsPrincipal(claimsIdentity),
+                    authProperties);
+
+                return Ok(new { success = true });
+            }
+            
+            return Ok();
+
         }
 
         [HttpGet("logout")]

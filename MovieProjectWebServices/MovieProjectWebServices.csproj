@@ -7,6 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Controllers\TicketController.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.8" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.8" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.8">
       <PrivateAssets>all</PrivateAssets>
@@ -16,9 +21,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="MoviesDatabase">
-      <HintPath>..\..\MoviesDatabase\MoviesDatabase\bin\Debug\net8.0\MoviesDatabase.dll</HintPath>
-    </Reference>
+    <Folder Include="Migrations\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\MoviesDatabase\MoviesDatabase\MoviesDatabase.csproj" />
   </ItemGroup>
 
 

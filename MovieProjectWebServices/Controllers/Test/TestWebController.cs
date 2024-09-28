@@ -3,6 +3,8 @@ using MoviesDatabase.Interfaces;
 using MoviesDatabase.Models;
 using MoviesDatabase.Repos;
 using MoviesDatabase.Models.Test;
+using Microsoft.AspNetCore.Authorization;
+using System.Data;
 
 namespace MovieProjectWebServices.Controllers.Test
 {
@@ -26,21 +28,12 @@ namespace MovieProjectWebServices.Controllers.Test
                 return Ok(tests);
             }
             else return BadRequest();
-
         }
 
         [HttpPost("CreateTest")]
-        public async Task<IActionResult> Create([FromBody] TestModel input) 
+        public async Task<IActionResult> Create() 
         {
-            if (input != null) 
-            {
-                (bool result, string message) = await repo.Create(input);
-                if (result) return Ok();
-
-                else return BadRequest(message);
-            }
-
-            else return BadRequest();
+            return Ok();
         }
     }
 }

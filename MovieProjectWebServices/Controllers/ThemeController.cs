@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using MoviesDatabase.DTO;
 using MoviesDatabase.Interfaces;
 using MoviesDatabase.Models;

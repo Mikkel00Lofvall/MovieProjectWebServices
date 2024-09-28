@@ -1,67 +1,91 @@
-using Microsoft.AspNetCore.Connections;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
+using MovieProjectWebServices.Controllers;
 using MoviesDatabase;
 using MoviesDatabase.Interfaces;
 using MoviesDatabase.Models;
 using MoviesDatabase.Models.Test;
 using MoviesDatabase.Repos;
-using System.Runtime.InteropServices;
+using System.Text;
 
 namespace MovieProjectWebServices
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
-
             string machineName = System.Environment.MachineName;
             var builder = WebApplication.CreateBuilder(args);
 
+            // CORS policy
             builder.Services.AddCors(options =>
             {
                 options.AddPolicy("AllowSpecificOrigins",
                     policy =>
                     {
-                        policy.WithOrigins("http://localhost:3000") // React frontend running on port 3000
+                        policy.WithOrigins("http://localhost:3000") // React frontend
                               .AllowAnyMethod()
                               .AllowAnyHeader()
                               .AllowCredentials();
                     });
             });
 
+            // Register repositories
             builder.Services.AddScoped<MovieRepository>();
             builder.Services.AddScoped<ScheduleRepository>();
             builder.Services.AddScoped<CinemaHallRepository>();
+            builder.Services.AddScoped<AdminUserRepository>();
+            // builder.Services.AddScoped<TicketRepository>();
             builder.Services.AddScoped<IRepository<ThemeModel>, Repository<ThemeModel>>();
             builder.Services.AddScoped<IRepository<TestModel>, Repository<TestModel>>();
-            builder.Services.AddScoped<IRepository<CinemaHallModel>, Repository <CinemaHallModel>>();
+            builder.Services.AddScoped<IRepository<CinemaHallModel>, Repository<CinemaHallModel>>();
 
-            string connectionString = "";
 
-            if (machineName == "MSI") connectionString = builder.Configuration.GetConnectionString("OffSiteConnection");
+            // Connection string
+            string connectionString = machineName switch
+            {
+                "MSI" => builder.Configuration.GetConnectionString("OffSiteConnection"),
+                "MJENSENLAPTOP" => builder.Configuration.GetConnectionString("HomeConnection"),
+                _ => builder.Configuration.GetConnectionString("HomeConnection"),
+            };
 
-            else if (machineName == "MJENSENLAPTOP") connectionString = builder.Configuration.GetConnectionString("HomeConnection");
-                
-            else connectionString = builder.Configuration.GetConnectionString("HomeConnection");
-                
-
+            // Add DB context
             builder.Services.AddDbContext<ContextDB>(options =>
-                options.UseSqlServer(
-                    connectionString,
-                    sqlOptions => sqlOptions.MigrationsAssembly("MoviesDatabase")));
+                options.UseSqlServer(connectionString, sqlOptions => sqlOptions.MigrationsAssembly("MoviesDatabase")));
+
+
+            ///////// Security //////////
+
+
+            builder.Services.AddIdentityApiEndpoints<IdentityUser>()
+                .AddEntityFrameworkStores<ContextDB>();
+
+
+            builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(options =>
+                {
+                    options.Cookie.Name = "MovieProjectCookeAuth";
+                    options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
+                    options.LoginPath = "/api/login";
+                    options.AccessDeniedPath = "/";
+                    options.Cookie.Path = "/";
+                });
+
+
+            ///////// Security //////////
 
 
             builder.Services.AddControllers();
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
+            // Configure the HTTP request pipeline
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
@@ -69,16 +93,15 @@ namespace MovieProjectWebServices
             }
 
             app.UseCors("AllowSpecificOrigins");
-
             app.UseHttpsRedirection();
-
+            app.UseAuthentication();
             app.UseAuthorization();
-
 
             app.MapControllers();
 
-
             app.Run();
         }
+
+     
     }
 }

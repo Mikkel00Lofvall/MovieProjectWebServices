@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using MoviesDatabase.DTO;
 using MoviesDatabase.Models;
 using MoviesDatabase.Repos;
@@ -110,7 +111,6 @@ namespace MovieProjectWebServices.Controllers
             return Ok(seatPageDTO);
         }
 
-
         [HttpPost("CreateSchedule")]
 
         public async Task<IActionResult> Create([FromBody] SchedulesDTO scheduleInput)
@@ -125,6 +125,7 @@ namespace MovieProjectWebServices.Controllers
 
             else return BadRequest();
         }
+
 
         [HttpDelete("DeleteSchedule")]
         public async Task<IActionResult> Delete([FromBody] ScheduleModel inputSchedule)
