@@ -74,15 +74,15 @@ namespace MovieProjectWebServices.Controllers
 
         }
 
-        [HttpDelete("DeleteTheme")]
-        public async Task<IActionResult> Delete([FromBody] ThemeModel genre)
+        [HttpDelete("DeleteTheme/{id}")]
+        public async Task<IActionResult> Delete(int id)
         {
-            (bool result, string message, var theme) = await repo.GetWithId(genre.id);
+            (bool result, string message, var theme) = await repo.GetWithId(id);
             if (result)
             {
                 if (theme != null)
                 {
-                    await repo.Delete(theme);
+                    await repo.Delete(id);
                     return Ok();
                 }
 
