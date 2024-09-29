@@ -127,23 +127,19 @@ namespace MovieProjectWebServices.Controllers
         }
 
 
-        [HttpDelete("DeleteSchedule")]
-        public async Task<IActionResult> Delete([FromBody] ScheduleModel inputSchedule)
+        [HttpDelete("DeleteSchedule/{id}")]
+        public async Task<IActionResult> Delete(int id)
         {
-            (bool result, string message, var resultSchedule) = await _repo.GetWithId(inputSchedule.id);
-            if (result)
-            {
-                if (resultSchedule != null)
-                {
-                    await _repo.Delete(resultSchedule);
-                    return Ok();
-                }
+            (bool result, string message, var resultSchedule) = await _repo.GetWithId(id);
+            if (result == false) return BadRequest("Movie does not exist in db");
 
-                else return BadRequest("Movie does not exist in db");
-            }
+            if (resultSchedule == null)  return BadRequest(message);
 
-            else return BadRequest(message);
+            (result, message) = await _repo.Delete(id);
 
+            if (result  == false) return BadRequest(message);
+
+            return Ok();
         }
 
 
