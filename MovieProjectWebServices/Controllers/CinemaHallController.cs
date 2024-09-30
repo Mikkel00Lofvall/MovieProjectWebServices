@@ -85,15 +85,15 @@ namespace MovieProjectWebServices.Controllers
 
         }
 
-        [HttpDelete("DeleteHall")]
-        public async Task<IActionResult> Delete([FromBody] CinemaHallModel hall)
+        [HttpDelete("DeleteHall/{id}")]
+        public async Task<IActionResult> Delete(int id)
         {
-            (bool result, string message, var cinemaHall) = await repo.GetWithId(hall.id);
+            (bool result, string message, var cinemaHall) = await repo.GetWithId(id);
             if (result)
             {
                 if (cinemaHall != null)
                 {
-                    await repo.Delete(cinemaHall);
+                    await repo.Delete(id);
                     return Ok();
                 }
 
