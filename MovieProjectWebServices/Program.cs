@@ -8,7 +8,7 @@ using MovieProjectWebServices.Controllers;
 using MoviesDatabase;
 using MoviesDatabase.Interfaces;
 using MoviesDatabase.Models;
-using MoviesDatabase.Models.Test;
+
 using MoviesDatabase.Repos;
 using System.Text;
 
@@ -16,7 +16,7 @@ namespace MovieProjectWebServices
 {
     public class Program
     {
-        public static async Task Main(string[] args)
+        public static void Main(string[] args)
         {
             string machineName = System.Environment.MachineName;
             var builder = WebApplication.CreateBuilder(args);
@@ -42,7 +42,6 @@ namespace MovieProjectWebServices
             builder.Services.AddScoped<ThemeRepository>();
             // builder.Services.AddScoped<TicketRepository>();
             builder.Services.AddScoped<IRepository<ThemeModel>, Repository<ThemeModel>>();
-            builder.Services.AddScoped<IRepository<TestModel>, Repository<TestModel>>();
             builder.Services.AddScoped<IRepository<CinemaHallModel>, Repository<CinemaHallModel>>();
 
 
@@ -69,11 +68,13 @@ namespace MovieProjectWebServices
             builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(options =>
                 {
-                    options.Cookie.Name = "MovieProjectCookeAuth";
-                    options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
+                    options.Cookie.Name = "MovieProjectCookeAuth-00594907-acbc-4cb0-bcc4-3e918f709f35";
+                    options.Cookie.MaxAge = TimeSpan.FromMinutes(15);
+                    options.SlidingExpiration = true;
                     options.LoginPath = "/api/login";
                     options.AccessDeniedPath = "/";
                     options.Cookie.Path = "/";
+                    options.Cookie.SameSite = SameSiteMode.None;
                 });
 
 
@@ -103,6 +104,6 @@ namespace MovieProjectWebServices
             app.Run();
         }
 
-     
+
     }
 }

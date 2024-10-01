@@ -17,6 +17,19 @@ namespace MovieProjectWebServices.Controllers
         public AccountController(AdminUserRepository repo) { this._repo = repo; }
 
 
+        [HttpPost("CheckAuth")]
+        public async Task<IActionResult> CheckAuth()
+        {
+            var cookieValue = Request.Cookies["MovieProjectCookeAuth-00594907-acbc-4cb0-bcc4-3e918f709f35"];
+            if (cookieValue != null)
+            {
+                return Ok("Cookie exists: " + cookieValue);
+            }
+
+            return Unauthorized("No cookie found.");
+        }
+
+
         [HttpPost("Create")]
         public async Task<IActionResult> Create([FromBody] LoginDTO DTO)
         {
@@ -42,39 +55,52 @@ namespace MovieProjectWebServices.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginDTO loginDTO)
         {
-
             (bool isAdmin, string message) = await _repo.GetAdminUser(loginDTO.Username, loginDTO.Password);
 
-            if (isAdmin) 
+            if (isAdmin)
             {
                 var claims = new List<Claim>
-                {
-                    new Claim(ClaimTypes.Name, "example")
-                };
+        {
+            new Claim(ClaimTypes.Name, loginDTO.Username)
+        };
 
                 var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                 var authProperties = new AuthenticationProperties
                 {
-
+                    IsPersistent = true,
+                    ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(30)
                 };
 
-                HttpContext.SignInAsync(
+                // Sign in the user
+                await HttpContext.SignInAsync(
                     CookieAuthenticationDefaults.AuthenticationScheme,
                     new ClaimsPrincipal(claimsIdentity),
                     authProperties);
 
-                return Ok(new { success = true });
+                return Ok(new { success = true, message = "Login successful." });
             }
-            
-            return Ok();
 
+            return Unauthorized(new { success = false, message = message });
         }
 
-        [HttpGet("logout")]
-        public IActionResult Logout()
+
+        [HttpPost("logout")]
+        public async Task<IActionResult> Logout()
         {
-            HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            return Ok(new { success = true });
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+
+            if (Request.Cookies["MovieProjectCookeAuth-00594907-acbc-4cb0-bcc4-3e918f709f35"] != null)
+            {
+                Response.Cookies.Append("MovieProjectCookeAuth-00594907-acbc-4cb0-bcc4-3e918f709f35", "", new CookieOptions
+                {
+                    Expires = DateTime.UtcNow.AddDays(-1),
+                    Path = "/",
+                    HttpOnly = true,
+                    Secure = true
+                });
+            }
+
+            return Ok(new { message = "Logged out" });
         }
     }
 

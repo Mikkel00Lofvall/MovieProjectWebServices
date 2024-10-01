@@ -64,15 +64,15 @@ namespace MovieProjectWebServices.Controllers
 
         }
 
-        [HttpDelete("DeleteMovie")]
-        public async Task<IActionResult> Delete([FromBody] MovieModel movie)
+        [HttpDelete("DeleteMovie/{id}")]
+        public async Task<IActionResult> Delete(int id)
         {
-            (bool result, string message, var resultMovie) = await repo.GetWithId(movie.id);
+            (bool result, string message, var resultMovie) = await repo.GetWithId(id);
             if (result)
             {
                 if (resultMovie != null)
                 {
-                    await repo.Delete(resultMovie);
+                    await repo.Delete(id);
                     return Ok();
                 }
 
