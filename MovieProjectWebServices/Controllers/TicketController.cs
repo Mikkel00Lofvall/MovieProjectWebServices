@@ -10,32 +10,46 @@ namespace MovieProjectWebServices.Controllers
     public class TicketController : ControllerBase
     {
 
-        private readonly CinemaHallRepository _HallRepository;
-        private readonly MovieRepository _MovieRepository;
+        private readonly ScheduleRepository _scheduleRepository;
         private readonly TicketRepository _TicketRepository;
 
-        public TicketController(CinemaHallRepository hallRepository, MovieRepository movieRepository, TicketRepository ticketRepository)
+        public TicketController(ScheduleRepository scheduleRepo, TicketRepository ticketRepo)
         {
-            _HallRepository = hallRepository;
-            _MovieRepository = movieRepository;
-            _TicketRepository = ticketRepository;
+            _TicketRepository = ticketRepo;
+            _scheduleRepository = scheduleRepo;
         }
 
-        [HttpPost]
+        [HttpGet("GetTicketWithScheduleID/{id}")]
+        public async Task<IActionResult> Get(int id)
+        {
+            (bool result, string message, List<TicketModel> tickets) = await _TicketRepository.GetAllWithScheduleID(id);
+            if (result == false) return BadRequest(message);
+
+            if (tickets.Count() > 0)
+            {
+                return Ok(tickets);
+            }
+
+            else
+            {
+                return Ok("No Tickets For This Schedule");
+            }
+        }
+
+        [HttpPost("Create")]
         public async Task<IActionResult> Create([FromBody] TicketDTO ticket)
         {
-            if (ticket == null)
+            if (ticket != null)
             {
-                (bool result, string message, MovieModel movie) = await _MovieRepository.GetWithId(ticket.MovieID);
-                (result, message, CinemaHallModel hall) = await _HallRepository.GetWithId(ticket.MovieID);
+                (bool result, string message, ScheduleModel schedue) = await _scheduleRepository.GetWithId(ticket.ScheduleID);;
 
-                if (movie != null && hall != null)
+                if (schedue != null)
                 {
                     TicketModel ticketModel = new TicketModel()
                     {
-                        MovieID = ticket.MovieID,
-                        HallID = ticket.HallID,
                         SeatID = ticket.SeatID,
+                        ScheduleID = ticket.ScheduleID,
+                        DateID = ticket.DateID,
                     };
 
                     (result, message) = await _TicketRepository.Create(ticketModel);

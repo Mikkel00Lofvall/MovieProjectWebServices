@@ -19,12 +19,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="MoviesDatabase">
-      <HintPath>..\..\..\MoviesDatabase\MoviesDatabase\bin\Debug\net8.0\MoviesDatabase.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-
-  <ItemGroup>
     <Using Include="Xunit" />
   </ItemGroup>
 

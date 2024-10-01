@@ -37,44 +37,19 @@ namespace MovieProjectWebServices.Controllers
 
         }
 
-        char GetNextLetter(char letter)
-        {
-            if (letter == 'Z')
-            {
-                return 'A';
-            }
-            return (char)(letter + 1);
-        }
 
         [HttpPost("CreateHall")]
         public async Task<IActionResult> Create([FromBody] CinemaHallDTO DTO)
         {
             if (DTO != null)
             {
-                char currentLetter = 'A';
+
                 CinemaHallModel hallModel = new CinemaHallModel();
-                List<SeatModel> seatModels = new List<SeatModel>();
 
-                for (int row = 0; row < DTO.RowAmount; row++)
-                {
-                    for (int seat = 0; seat < DTO.SeatsOnARow; seat++)
-                    {
-                        SeatModel seatModel = new SeatModel()
-                        {
-                            RowName = $"{currentLetter}",
-                            RowNumber = seat + 1,
-                            IsTaken = false
-                        };
-
-                        seatModels.Add(seatModel);
-                    }
-
-                    currentLetter = GetNextLetter(currentLetter);
-                }
 
                 hallModel.Name = DTO.Name;
-                hallModel.Seats = seatModels;
                 hallModel.SeatsOnRow = DTO.SeatsOnARow;
+                hallModel.RowsOfSeat = DTO.RowAmount;
                 (bool result, string message) = await repo.Create(hallModel);
                 if (result) return Ok();
 

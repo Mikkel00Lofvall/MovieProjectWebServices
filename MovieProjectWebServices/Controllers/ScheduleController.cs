@@ -61,7 +61,7 @@ namespace MovieProjectWebServices.Controllers
         [HttpGet("GetMovieAndScheduleByID/{id}")]
         public async Task<IActionResult> GetMovieAndSchedule(int id)
         {
-            (bool result, string message, ScheduleModel schedule, MovieModel movie) = await _repo.GetMovieAndScheduleByID(id);
+            (bool result, string message, ScheduleModel schedule, MovieModel movie, List<TicketModel> tickets) = await _repo.GetMovieAndScheduleByID(id);
 
             if (!result) return BadRequest($"Result was not Succesful | Message: {message}");
 
@@ -79,9 +79,7 @@ namespace MovieProjectWebServices.Controllers
             {
                 id = GottenObject.id,
                 Name = GottenObject.Name,
-                Seats = GottenObject.Seats,
                 SeatsOnRow = GottenObject.SeatsOnRow,
-
             };
 
             MovieDTO movieDTO = new MovieDTO()
@@ -94,18 +92,30 @@ namespace MovieProjectWebServices.Controllers
                 TrailerLink = movie.TrailerLink,
             };
 
+            DateDTO dateModel = new DateDTO()
+            {
+                Year = schedule.Date.Year,
+                Month = schedule.Date.Month,
+                Day = schedule.Date.Day,
+                Hour = schedule.Date.Hour,
+                Minute = schedule.Date.Minute,
+                Second = schedule.Date.Second,
+            };
+
             ScheduleDTO scheduleDTO = new ScheduleDTO()
             {
                 id = schedule.id,
-                date = schedule.Date,
+                date = dateModel,
                 MovieID = schedule.MovieId,
+                Seats = schedule.Seats,
+                Tickets = tickets,
             };
 
             SeatPageDTO seatPageDTO = new SeatPageDTO()
             {
                 Hall = hallDTO,
                 Movie = movieDTO,
-                Schedule = scheduleDTO,
+                Schedule = scheduleDTO
             };
 
             return Ok(seatPageDTO);
