@@ -22,7 +22,7 @@ namespace MovieProjectWebServices.Controllers
         [HttpGet("GetTicketWithScheduleID/{id}")]
         public async Task<IActionResult> Get(int id)
         {
-            (bool result, string message, List<TicketModel> tickets) = await _TicketRepository.GetAllWithScheduleID(id);
+            (bool result, string message, List<TicketDTO> tickets) = await _TicketRepository.GetAllWithScheduleID(id);
             if (result == false) return BadRequest(message);
 
             if (tickets.Count() > 0)
@@ -37,7 +37,7 @@ namespace MovieProjectWebServices.Controllers
         }
 
         [HttpPost("Create")]
-        public async Task<IActionResult> Create([FromBody] TicketDTO ticket)
+        public async Task<IActionResult> Create([FromBody] TicketCreateDTO ticket)
         {
             if (ticket != null)
             {
@@ -50,6 +50,8 @@ namespace MovieProjectWebServices.Controllers
                         SeatID = ticket.SeatID,
                         ScheduleID = ticket.ScheduleID,
                         DateID = ticket.DateID,
+                        Email = ticket.Email,
+                        PhoneNumber = ticket.PhoneNumber,
                     };
 
                     (result, message) = await _TicketRepository.Create(ticketModel);
