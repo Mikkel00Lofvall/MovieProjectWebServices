@@ -23,7 +23,7 @@ namespace MovieProjectWebServices.Controllers
         public async Task<IActionResult> Get(int id)
         {
             (bool result, string message, List<TicketDTO> tickets) = await _TicketRepository.GetAllWithScheduleID(id);
-            if (result == false) return BadRequest(message);
+            if (result == false) return Problem(message);
 
             if (tickets.Count() > 0)
             {
@@ -61,13 +61,13 @@ namespace MovieProjectWebServices.Controllers
                         return Ok();
                     }
 
-                    else return BadRequest(message);
+                    else return Problem(message);
                 }
 
-                else return BadRequest("No Movie Or Hall With Those IDs");
+                else return Problem("No Movie Or Hall With Those IDs");
             }
 
-            else return BadRequest("No Ticket Data");
+            else return Problem("No Ticket Data");
         } 
     }
 }

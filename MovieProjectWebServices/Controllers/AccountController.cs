@@ -26,7 +26,7 @@ namespace MovieProjectWebServices.Controllers
                 return Ok("Cookie exists: " + cookieValue);
             }
 
-            return Unauthorized("No cookie found.");
+            return NoContent();
         }
 
 
@@ -44,10 +44,10 @@ namespace MovieProjectWebServices.Controllers
                 (bool result, string message) = await _repo.Create(adminUser);
                 if (result) return Ok();
 
-                else return BadRequest(message);
+                else return Problem(message);
             }
 
-            else return BadRequest();
+            else return NoContent();
 
         }
 
@@ -60,9 +60,9 @@ namespace MovieProjectWebServices.Controllers
             if (isAdmin)
             {
                 var claims = new List<Claim>
-        {
-            new Claim(ClaimTypes.Name, loginDTO.Username)
-        };
+                {
+                    new Claim(ClaimTypes.Name, loginDTO.Username)
+                };
 
                 var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                 var authProperties = new AuthenticationProperties

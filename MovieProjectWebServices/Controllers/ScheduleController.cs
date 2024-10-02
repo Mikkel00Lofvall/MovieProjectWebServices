@@ -28,7 +28,7 @@ namespace MovieProjectWebServices.Controllers
                 return Ok(schedules);
             }
 
-            return BadRequest(message);
+            return Problem(message);
             
         }
 
@@ -52,10 +52,10 @@ namespace MovieProjectWebServices.Controllers
                     return Ok(objects);
                 }
                    
-                else return BadRequest("No Schedules for this movie!");
+                else return Problem("No Schedules for this movie!");
             }
             
-            return BadRequest(message);
+            return Problem(message);
         }
 
         [HttpGet("GetMovieAndScheduleByID/{id}")]
@@ -63,17 +63,16 @@ namespace MovieProjectWebServices.Controllers
         {
             (bool result, string message, ScheduleModel schedule, MovieModel movie, List<TicketModel> tickets) = await _repo.GetMovieAndScheduleByID(id);
 
-            if (!result) return BadRequest($"Result was not Succesful | Message: {message}");
+            if (!result) return Problem($"Result was not Succesful | Message: {message}");
 
-            if (schedule == null) return BadRequest($"Result was not Succesful | Message: No Schedule in db by that schedule id");
-
-            if (schedule == null) return BadRequest($"Result was not Succesful | Message: No Movie in db by that schedule id");
+            if (schedule == null) return Problem($"Result was not Succesful | Message: No Schedule in db by that schedule id");
+            if (movie == null) return Problem($"Result was not Succesful | Message: No Movie in db connected to that schedule id");
 
             (result, message, var GottenObject) = await _cinemaHallRepository.GetHallBySchedule(id);
 
-            if (!result) return BadRequest($"Result was not Succesful | Message: {message}");
+            if (!result) return Problem($"Result was not Succesful | Message: {message}");
 
-            if (GottenObject == null) return BadRequest($"Result was not Succesful | Message: No Cinema Hall connected to that schedule id");
+            if (GottenObject == null) return Problem($"Result was not Succesful | Message: No Cinema Hall connected to that schedule id");
 
             HallDTO hallDTO = new HallDTO()
             {
@@ -130,10 +129,10 @@ namespace MovieProjectWebServices.Controllers
                 (bool result, string message) = await _repo.CreateScheduleAndInsertIntoHall(scheduleInput);
                 if (result) return Ok();
 
-                else return BadRequest(message);
+                else return Problem(message);
             }
 
-            else return BadRequest();
+            else return NoContent();
         }
 
 
@@ -141,13 +140,13 @@ namespace MovieProjectWebServices.Controllers
         public async Task<IActionResult> Delete(int id)
         {
             (bool result, string message, var resultSchedule) = await _repo.GetWithId(id);
-            if (result == false) return BadRequest("Movie does not exist in db");
+            if (result == false) return Problem("Movie does not exist in db");
 
-            if (resultSchedule == null)  return BadRequest(message);
+            if (resultSchedule == null)  return Problem(message);
 
             (result, message) = await _repo.Delete(id);
 
-            if (result  == false) return BadRequest(message);
+            if (result  == false) return Problem(message);
 
             return Ok();
         }

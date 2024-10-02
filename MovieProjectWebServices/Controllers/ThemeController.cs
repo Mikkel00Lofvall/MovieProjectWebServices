@@ -33,7 +33,7 @@ namespace MovieProjectWebServices.Controllers
             (bool result, string message, var theme) = await repo.GetWithId(id);
             if (result) return Ok(theme);
 
-            else return BadRequest(message);
+            else return Problem(message);
 
 
         }
@@ -43,7 +43,7 @@ namespace MovieProjectWebServices.Controllers
         {
             (bool result, string message, var Themes) = await repo.GetThemesWithMovieID(movieID);
             if (result) return Ok(Themes);
-            else return BadRequest(message);
+            else return Problem(message);
         }
 
         [HttpPost("UpdateMovieWithThemes/{movieID}")]
@@ -53,7 +53,7 @@ namespace MovieProjectWebServices.Controllers
 
             (bool result, string message) = await repo.UpdateMovieWithThemes(movieID, DTO);
             if (result) return Ok(result);
-            else return BadRequest(message);
+            else return Problem(message);
         }
 
         [HttpPost("CreateTheme")]
@@ -67,10 +67,10 @@ namespace MovieProjectWebServices.Controllers
                 (bool result, string message) = await repo.Create(newTheme);
                 if (result) return Ok();
 
-                else return BadRequest(message);
+                else return Problem(message);
             }
 
-            else return BadRequest();
+            else return NoContent();
 
         }
 
@@ -86,10 +86,10 @@ namespace MovieProjectWebServices.Controllers
                     return Ok();
                 }
 
-                else return BadRequest("Movie does not exist in db");
+                else return Problem("Movie does not exist in db");
             }
 
-            else return BadRequest(message);
+            else return Problem(message);
 
         }
     }

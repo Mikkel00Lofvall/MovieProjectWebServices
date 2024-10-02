@@ -37,7 +37,7 @@ namespace MovieProjectWebServices.Controllers
             (bool result, string message, var resultMovie) = await repo.GetWithId(id);
             if (result) return Ok(resultMovie);
 
-            else return BadRequest(message);
+            else return Problem(message);
 
         }
 
@@ -57,10 +57,10 @@ namespace MovieProjectWebServices.Controllers
                 (bool result, string message) = await repo.Create(newMovie);
                 if (result) return Ok();
 
-                else return BadRequest(message);
+                else return Problem(message);
             }
 
-            else return BadRequest();
+            else return NoContent();
 
         }
 
@@ -76,10 +76,10 @@ namespace MovieProjectWebServices.Controllers
                     return Ok();
                 }
 
-                else return BadRequest("Movie does not exist in db");
+                else return Problem("Movie does not exist in db");
             }
 
-            else return BadRequest(message);
+            else return Problem(message);
 
         }
     }
