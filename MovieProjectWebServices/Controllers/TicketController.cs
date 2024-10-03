@@ -32,7 +32,7 @@ namespace MovieProjectWebServices.Controllers
 
                 else
                 {
-                    return Problem("No Users");
+                    return Problem("No Ticket");
                 }
             }
             catch (Exception ex) { return Problem(ex.Message); }
@@ -41,18 +41,20 @@ namespace MovieProjectWebServices.Controllers
         [HttpGet("GetTicketWithScheduleID/{id}")]
         public async Task<IActionResult> Get(int id)
         {
-            (bool result, string message, List<TicketDTO> tickets) = await _TicketRepository.GetAllWithScheduleID(id);
-            if (result == false) return Problem(message);
-
-            if (tickets.Count() > 0)
+            try
             {
-                return Ok(tickets);
-            }
+                (bool result, string message, List<TicketDTO> tickets) = await _TicketRepository.GetAllWithScheduleID(id);
+                if (result)
+                {
+                    return Ok(tickets);
+                }
 
-            else
-            {
-                return Ok("No Tickets For This Schedule");
+                else
+                {
+                    return Problem("No Tickets");
+                }
             }
+            catch (Exception ex) { return Problem(ex.Message); }
         }
 
         [HttpPost("Create")]
@@ -87,6 +89,24 @@ namespace MovieProjectWebServices.Controllers
             }
 
             else return Problem("No Ticket Data");
-        } 
+        }
+
+        [HttpDelete("Delete/{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            (bool result, string message, var theme) = await _TicketRepository.GetWithId(id);
+            if (result)
+            {
+                if (theme != null)
+                {
+                    await _TicketRepository.Delete(id);
+                    return Ok();
+                }
+
+                else return Problem("ticket does not exist in db");
+            }
+
+            else return Problem(message);
+        }
     }
 }

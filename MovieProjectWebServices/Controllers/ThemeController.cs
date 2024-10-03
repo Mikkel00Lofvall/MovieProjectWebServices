@@ -32,7 +32,7 @@ namespace MovieProjectWebServices.Controllers
 
                 else
                 {
-                    return Problem("No Users");
+                    return Problem("No Themes");
                 }
             }
             catch (Exception ex) { return Problem(ex.Message); }
@@ -96,7 +96,7 @@ namespace MovieProjectWebServices.Controllers
                     return Ok();
                 }
 
-                else return Problem("Movie does not exist in db");
+                else return Problem("theme does not exist in db");
             }
 
             else return Problem(message);
