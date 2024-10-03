@@ -22,14 +22,20 @@ namespace MovieProjectWebServices.Controllers
         [HttpGet("GetSchedules")]
         public async Task<IActionResult> Get()
         {
-            (bool result, string message, var schedules) = await _repo.GetAll();
-            if (result)
+            try
             {
-                return Ok(schedules);
-            }
+                (bool result, string message, ICollection<ScheduleModel> schedules) = await _repo.GetAll();
+                if (result)
+                {
+                    return Ok(schedules);
+                }
 
-            return Problem(message);
-            
+                else
+                {
+                    return Problem("No Users");
+                }
+            }
+            catch (Exception ex) { return Problem(ex.Message); }
         }
 
         [HttpGet("GetSchedulesWithMovieID/{id}")]

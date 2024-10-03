@@ -22,9 +22,20 @@ namespace MovieProjectWebServices.Controllers
         [HttpGet("GetHalls")]
         public async Task<IActionResult> Get()
         {
-            var cinemaHall = await repo.GetAll();
+            try
+            {
+                (bool result, string message, ICollection<CinemaHallModel> halls) = await repo.GetAll();
+                if (result)
+                {
+                    return Ok(halls);
+                }
 
-            return Ok(cinemaHall);
+                else
+                {
+                    return Problem("No Users");
+                }
+            }
+            catch (Exception ex) { return Problem(ex.Message); }
         }
 
         [HttpGet("GetHallWithId/{id}")]

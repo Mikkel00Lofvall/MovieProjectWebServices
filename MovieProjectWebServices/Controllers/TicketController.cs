@@ -19,6 +19,25 @@ namespace MovieProjectWebServices.Controllers
             _scheduleRepository = scheduleRepo;
         }
 
+        [HttpGet("GetTickets")]
+        public async Task<IActionResult> Get()
+        {
+            try
+            {
+                (bool result, string message, ICollection<TicketModel> tickets) = await _TicketRepository.GetAll();
+                if (result)
+                {
+                    return Ok(tickets);
+                }
+
+                else
+                {
+                    return Problem("No Users");
+                }
+            }
+            catch (Exception ex) { return Problem(ex.Message); }
+        }
+
         [HttpGet("GetTicketWithScheduleID/{id}")]
         public async Task<IActionResult> Get(int id)
         {

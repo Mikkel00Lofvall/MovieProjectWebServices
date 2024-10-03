@@ -22,11 +22,21 @@ namespace MovieProjectWebServices.Controllers
         [HttpGet("GetThemes")]
         public async Task<IActionResult> Get()
         {
-            var themes = await repo.GetAll();
+            try
+            {
+                (bool result, string message, ICollection<ThemeModel> themes) = await repo.GetAll();
+                if (result)
+                {
+                    return Ok(themes);
+                }
 
-            return Ok(themes);
+                else
+                {
+                    return Problem("No Users");
+                }
+            }
+            catch (Exception ex) { return Problem(ex.Message); }
         }
-
         [HttpGet("GetThemeWithId/{id}")]
         public async Task<IActionResult> Get(int id)
         {

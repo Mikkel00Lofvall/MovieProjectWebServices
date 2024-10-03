@@ -24,15 +24,26 @@ namespace MovieProjectWebServices.Controllers
 
 
         [HttpGet("GetMovies")]
-        public async Task<IActionResult> Get() 
+        public async Task<IActionResult> Get()
         {
-            var movies = await repo.GetAll();
-            
-            return Ok(movies);
+            try
+            {
+                (bool result, string message, ICollection<MovieModel> movies) = await repo.GetAll();
+                if (result)
+                {
+                    return Ok(movies);
+                }
+
+                else
+                {
+                    return Problem("No Users");
+                }
+            }
+            catch (Exception ex) { return Problem(ex.Message); }
         }
 
         [HttpGet("GetMovieWithId/{id}")]
-        public async Task<IActionResult> Get(int id) 
+        public async Task<IActionResult> Get(int id)
         {
             (bool result, string message, var resultMovie) = await repo.GetWithId(id);
             if (result) return Ok(resultMovie);

@@ -6,6 +6,7 @@ using MoviesDatabase.Interfaces;
 using MoviesDatabase.Models;
 using MoviesDatabase.Repos;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Components.Web;
 
 namespace MovieProjectWebServices.Controllers
 {
@@ -16,6 +17,37 @@ namespace MovieProjectWebServices.Controllers
         private readonly AdminUserRepository _repo;
         public AccountController(AdminUserRepository repo) { this._repo = repo; }
 
+        [HttpGet("GetAll")]
+        public async Task<IActionResult> Get() 
+        {
+            try
+            {
+                (bool result, string message, ICollection<AdminUserGetDTO> adminUserModels) = await _repo.GetAll();
+                if (result) 
+                {
+                    return Ok(adminUserModels);
+                }
+
+                else
+                {
+                    return Problem("No Users");
+                }
+            }
+            catch (Exception ex) { return Problem(ex.Message); }
+        }
+
+        [HttpDelete("Delete/{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            try
+            {
+                (bool result, string message) = await _repo.Delete(id);
+                if (result == false) return Problem(message);
+
+                return Ok("Deleted User");
+            }
+            catch(Exception ex) { return Problem(ex.Message); }
+        }
 
         [HttpPost("CheckAuth")]
         public async Task<IActionResult> CheckAuth()
@@ -26,7 +58,7 @@ namespace MovieProjectWebServices.Controllers
                 return Ok("Cookie exists: " + cookieValue);
             }
 
-            return NoContent();
+            return Unauthorized();
         }
 
 
