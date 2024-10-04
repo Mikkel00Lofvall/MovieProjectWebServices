@@ -58,10 +58,10 @@ namespace MovieProjectWebServices.Controllers
                     return Ok(objects);
                 }
                    
-                else return Problem("No Schedules for this movie!");
+                else return Ok(objects);
             }
             
-            return Problem(message);
+            return Ok(objects);
         }
 
         [HttpGet("GetMovieAndScheduleByID/{id}")]

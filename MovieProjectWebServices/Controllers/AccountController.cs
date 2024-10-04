@@ -67,13 +67,8 @@ namespace MovieProjectWebServices.Controllers
         {
             if (DTO != null)
             {
-                AdminUserModel adminUser = new AdminUserModel() 
-                { 
-                    Username = DTO.Username,
-                    Password = DTO.Password,
-                };
 
-                (bool result, string message) = await _repo.Create(adminUser);
+                (bool result, string message) = await _repo.Create(DTO.Username, DTO.Password);
                 if (result) return Ok();
 
                 else return Problem(message);

@@ -39,7 +39,8 @@ namespace MoviesDatabase.Test
         {
             ThemeRepository repo = new ThemeRepository(_context);
 
-            var result = await repo.GetAll();
+            var
+                result = await repo.GetAll();
 
             Assert.NotNull(result);
         }

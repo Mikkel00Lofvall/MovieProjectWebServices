@@ -35,6 +35,7 @@ namespace MovieProjectWebServices
             });
 
             // Register repositories
+            builder.Services.AddScoped<HasherService>();
             builder.Services.AddScoped<MovieRepository>();
             builder.Services.AddScoped<ScheduleRepository>();
             builder.Services.AddScoped<CinemaHallRepository>();
